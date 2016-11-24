@@ -2,8 +2,11 @@
 $(document).on('pageinit', function() {
 	
 	//set up listener for button click
-	$(document).on('click', getPosition);
-	
+	$('#getLocationButton').on('click', getPosition);
+    $('#On').on('click', On);
+    $('#Off').on('click', Off);
+
+
 	//change time box to show message
 	$('#time').val("Press the button to get location data");
 	
@@ -18,8 +21,41 @@ function getPosition() {
 	
 	//instruct location service to get position with appropriate callbacks
 	navigator.geolocation.getCurrentPosition(successPosition, failPosition);
+
+    }
+function On() {
+    var watchID = navigator.geolocation.watchPosition(
+				success, fail, locationOptions);
+var locationOptions = { 
+	maximumAge: 10000, 
+	timeout: 6000, 
+	enableHighAccuracy: true 
+};
+
+
+}
+function success(position) {
+	//do something with the position
+    var latitude = position.coords.latitude;
+    var longitude = position.coords.longitude;
+    var unixtime = new Date(position.timestamp);
+    var date = unixtime.toDateString();
+
+	
+	//OK. Now we want to update the display with the correct values
+	$('#time').val(date);
+	$('#lattext').val(latitude);
+    $('#longtext').val(longitude);
 }
 
+function fail(error) {
+	//do something with the error
+    	//change time box to show updated message
+	$('#time').val("Error getting data: " + error);
+}
+function Off() {
+    navigator.geolocation.clearWatch(watchID);
+}
 
 //called when the position is successfully determined
 function successPosition(position) {
